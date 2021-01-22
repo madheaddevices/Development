@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<MCU_DEVICE_FLAGS>
+  <DEVICE>
+    <DEVICE_NAME>P32MX534F064H</DEVICE_NAME>
+    <SETTINGS>
+      <COUNT>23</COUNT>
+      <SETTING0>
+        <NAME>SRS Select</NAME>
+        <DESCRIPTION>SRS Priority 7</DESCRIPTION>
+      </SETTING0>
+      <SETTING1>
+        <NAME>CAN I/O Pin Select</NAME>
+        <DESCRIPTION>Enabled</DESCRIPTION>
+      </SETTING1>
+      <SETTING2>
+        <NAME>USB USID Selection</NAME>
+        <DESCRIPTION>Enabled</DESCRIPTION>
+      </SETTING2>
+      <SETTING3>
+        <NAME>USB VBUS ON Selection</NAME>
+        <DESCRIPTION>Enabled</DESCRIPTION>
+      </SETTING3>
+      <SETTING4>
+        <NAME>PLL Input Divider</NAME>
+        <DESCRIPTION>2x Divider</DESCRIPTION>
+      </SETTING4>
+      <SETTING5>
+        <NAME>PLL Multiplier</NAME>
+        <DESCRIPTION>20x Multiplier</DESCRIPTION>
+      </SETTING5>
+      <SETTING6>
+        <NAME>USB PLL Input Divider</NAME>
+        <DESCRIPTION>12x Divider</DESCRIPTION>
+      </SETTING6>
+      <SETTING7>
+        <NAME>USB PLL Enable</NAME>
+        <DESCRIPTION>Disabled</DESCRIPTION>
+      </SETTING7>
+      <SETTING8>
+        <NAME>System PLL Output Clock Divider</NAME>
+        <DESCRIPTION>PLL Divide by 1</DESCRIPTION>
+      </SETTING8>
+      <SETTING9>
+        <NAME>Oscillator Selection Bits</NAME>
+        <DESCRIPTION>Primary Osc w/PLL (XT+,HS+,EC+PLL)</DESCRIPTION>
+      </SETTING9>
+      <SETTING10>
+        <NAME>Secondary Oscillator Enable</NAME>
+        <DESCRIPTION>Enabled</DESCRIPTION>
+      </SETTING10>
+      <SETTING11>
+        <NAME>Internal/External Switch Over</NAME>
+        <DESCRIPTION>Enabled</DESCRIPTION>
+      </SETTING11>
+      <SETTING12>
+        <NAME>Primary Oscillator Configuration</NAME>
+        <DESCRIPTION>XT osc mode</DESCRIPTION>
+      </SETTING12>
+      <SETTING13>
+        <NAME>CLKO Output Signal Active on the OSCO Pin</NAME>
+        <DESCRIPTION>Disabled</DESCRIPTION>
+      </SETTING13>
+      <SETTING14>
+        <NAME>Peripheral Clock Divisor</NAME>
+        <DESCRIPTION>Pb_Clk is Sys_Clk/1</DESCRIPTION>
+      </SETTING14>
+      <SETTING15>
+        <NAME>Clock Switching and Monitor Selection</NAME>
+        <DESCRIPTION>Clock Switch Disable, FSCM Disabled</DESCRIPTION>
+      </SETTING15>
+      <SETTING16>
+        <NAME>Watchdog Timer Postscaler</NAME>
+        <DESCRIPTION>1:1048576</DESCRIPTION>
+      </SETTING16>
+      <SETTING17>
+        <NAME>Watchdog Timer Enable</NAME>
+        <DESCRIPTION>Disabled</DESCRIPTION>
+      </SETTING17>
+      <SETTING18>
+        <NAME>Background Debugger Enable</NAME>
+        <DESCRIPTION>Disabled</DESCRIPTION>
+      </SETTING18>
+      <SETTING19>
+        <NAME>ICE/ICD Comm Channel Select</NAME>
+        <DESCRIPTION>ICE EMUC2/EMUD2 pins shared with PGC2/PGD2</DESCRIPTION>
+      </SETTING19>
+      <SETTING20>
+        <NAME>Program Flash Write Protect</NAME>
+        <DESCRIPTION>Disabled</DESCRIPTION>
+      </SETTING20>
+      <SETTING21>
+        <NAME>Boot Flash Write Protect bit</NAME>
+        <DESCRIPTION>Disabled</DESCRIPTION>
+      </SETTING21>
+      <SETTING22>
+        <NAME>Code Protect</NAME>
+        <DESCRIPTION>Disabled</DESCRIPTION>
+      </SETTING22>
+    </SETTINGS>
+  </DEVICE>
+</MCU_DEVICE_FLAGS>
