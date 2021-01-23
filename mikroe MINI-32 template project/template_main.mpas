@@ -1,0 +1,23 @@
+// Copyright (c). 2021. Tamás Fejes
+// The hardware and software is licensed by the Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
+
+program MINI32MX_template;
+
+var
+   DATA_LED: sbit at LATD6_bit; // connected RD6 to on-board orange LED
+
+procedure Init;
+begin
+     AD1PCFG := 0xFFFF;        // All pins are digital
+     TRISD:=0;                 // PORTD to be outputs
+     LATD:=0;                  // PORTD turn to off
+end;
+
+begin                          // Main loop
+  Init;                        // Call Init procedure
+  while true do
+  begin
+       DATA_LED := not DATA_LED;
+       delay_ms(500);
+  end;
+end.
