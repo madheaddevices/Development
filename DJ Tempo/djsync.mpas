@@ -1,0 +1,229 @@
+// Copyright (c). 2021. Tamás Fejes
+// The hardware and software is licensed by the Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
+
+program DJ_Style_Sync;
+
+{$DEFINE DEBUG} // Debug mode flag
+
+uses ADC;
+
+const
+     Pot_Gravity_pin = 15;
+     
+const
+     LED_char : array[0..10] of byte = (63,6,91,79,102,109,125,7,127,111,128); // 7-segment numbers
+
+var
+   LEDA: sbit at LATE0_bit;
+   LEDB: sbit at LATE1_bit;
+   LEDC: sbit at LATE2_bit;
+   LEDD: sbit at LATE3_bit;
+   LEDE: sbit at LATE4_bit;
+   LEDF: sbit at LATE5_bit;
+   LEDG: sbit at LATE6_bit;
+   LEDP: sbit at LATE7_bit;
+   
+   SEG1: sbit at LATF4_bit;
+   SEG2: sbit at LATF5_bit;
+   SEG3: sbit at LATG8_bit;
+   SEG4: sbit at LATG7_bit;
+   
+   ENCA: sbit at LATD4_bit;
+   ENCB: sbit at LATD5_bit;
+   
+   Temp: sbit at LATG6_bit;
+
+   Time: word;
+   Speed: word;
+   duty: word;
+   Gravity_Pot_Value: word;
+   debug_text: string[5];
+   trigger_count : word;
+   dummy : word;
+   
+   Segment_Counter: byte;
+   Timer1_Counter: word;
+   
+//procedure Switch_read(); iv IVT_CHANGE_NOTICE; ilevel 7; ics ICS_SRS;
+//begin
+//     dummy := PORTD;
+//
+//     {$IFDEF DEBUG}
+////             inc(trigger_count);
+////             WordToStr(trigger_count, debug_text);
+////             UART1_Write_Text('T:');
+////             UART1_Write_Text(debug_text);
+////             UART1_Write(13);
+//             if PORTD.4 = 1 then UART1_Write('0') else UART1_Write('1');
+//             if PORTD.5 = 1 then UART1_Write('0') else UART1_Write('1');
+//
+//             UART1_Write(13);
+//     {$ENDIF}
+//     dummy := PORTD;
+//     inc(Time);
+//
+//     CNIF_bit := 0;
+//end;
+
+procedure Timer1Interrupt(); iv IVT_TIMER_1; ilevel 7; ics ICS_SRS; // 1msec Timer1 - ISR
+var random_number:word;
+begin
+  T1IF_bit	 := 0;
+  //1msec cycle
+  if Timer1_Counter = 1000 then Timer1_Counter := 0 else inc(Timer1_Counter);
+  if Timer1_Counter mod 1000 = 0 then
+  begin
+       //inc(Time);
+       Time := 32676 - rand;
+  end;
+  Temp := not Temp; // debug output for interrupt calling test, 1kHz output
+  if Segment_Counter = 3 then Segment_Counter := 0 else inc(Segment_Counter);
+end;
+
+procedure Timer2Interrupt(); iv IVT_TIMER_2; ilevel 7; ics ICS_SRS;
+begin
+  T2IF_bit	 := 0;
+  //Enter your code here
+end;
+
+
+procedure InitTimer1(); // Timer1 Initialization @ 1msec
+begin
+  T1CON	         := 0x8010; //0x8010
+  T1IP0_bit	 := 1;
+  T1IP1_bit	 := 1;
+  T1IP2_bit	 := 1;
+  T1IF_bit	 := 0;
+  T1IE_bit	 := 1;
+  PR1		 := 10000;
+  TMR1		 := 0;
+  Time := 0;
+end;
+
+procedure InitTimer2(); // Timer2 Initialization @ 10msec
+begin
+  T2CON	 := 0x8040;
+  T2IP0_bit	 := 1;
+  T2IP1_bit	 := 1;
+  T2IP2_bit	 := 1;
+  T2IF_bit	 := 0;
+  T2IE_bit	 := 1;
+  PR2		 := 50000;
+  TMR2		 := 0
+end;
+
+//procedure InitCN;
+//begin
+//     TRISD.4 := 1;              // RD4 - digital input
+//     TRISD.5 := 1;              // RD5 - digital input
+//     CNIP2_bit := 1;            // Interrupt priority
+//     CNIP1_bit := 1;            // Interrupt priority
+//     CNIP0_bit := 1;            // Interrupt priority
+//     CNPUE13_bit := 1;          // Enable pull-up resistor
+//     CNPUE14_bit := 1;          // Enable pull-up resistor
+//     CNEN13_bit := 1;           // Change Notification CN13 : ON
+//     CNEN14_bit := 1;           // Change Notification CN14 : ON
+//     ON__CNCON_bit := 1;        // Interrupt Change Notice : ON
+//     CNIE_bit := 1;             // Change Norification Interrupt Enabled
+//     trigger_count := 0;
+//end;
+
+procedure LEDCHAR4(in_number: word); //0 to 9999, integer number
+var
+   digit1: byte;
+   digit2: byte;
+   digit3: byte;
+   digit4: byte;
+   outputTXT: array[5] of char;
+begin
+     //convert to single chars Dig1..4
+     WordToStrWithZeros(in_number, outputTXT);
+     digit1:= outputTXT[1]-48;
+     digit2:= outputTXT[2]-48;
+     digit3:= outputTXT[3]-48;
+     digit4:= outputTXT[4]-48;
+     
+     if Segment_Counter = 0 then
+     begin
+          LATE := 0;
+          SEG1:=1;
+          LATE:= LED_char[digit4];
+          SEG4:=0;
+     end;
+     
+     if (Segment_Counter = 1) then
+     begin
+          LATE := 0;
+          SEG4:=1;
+          if in_number >= 10 then LATE:= LED_char[digit3] else LATE:=0;
+          SEG3:=0;
+     end;
+     
+     if (Segment_Counter = 2) then
+     begin
+          LATE := 0;
+          SEG3:=1;
+          if in_number >= 100 then LATE:= LED_char[digit2] else LATE:=0;
+          //LATE7_bit :=1; // Segment dot-point ON
+          SEG2:=0;
+     end;
+     
+     if (Segment_Counter = 3) then
+     begin
+          LATE := 0;
+          SEG2:=1;
+          SEG1:=0;
+          if in_number >= 1000 then LATE:= LED_char[digit1] else LATE:=0;
+          SEG1:=0;
+     end;
+end;
+
+procedure Init;                 // Initialization process (values, libraries, port configutation)
+begin
+     {$IFDEF DEBUG}
+             UART1_Init(57600);
+             UART1_Write_Text('Debug mode ON');
+             UART1_Write(13);
+     {$ENDIF}
+     DisableInterrupts;
+     Time := 0;
+     AD1PCFG := 0xFFFF;         // All pins are digital
+     TRISB15_bit := 1;          // RB15 input
+     
+     TRISF4_bit := 0;
+     TRISF5_bit := 0;
+     TRISG8_bit := 0;
+     TRISG7_bit := 0;
+     TRISG6_bit := 0;
+     
+     TRISE := 0;                // PORTE to be outputs
+     LATE := 0;                 // PORTE set off
+     MVEC_bit := 1;
+     InitTimer1;                // Init. Timer1 ISR - Read UI / 1kHz
+     InitTimer2;                // Init. Timer2 ISR - Refresh UI / 100Hz
+     //InitCN;                  // Init. CN ISR
+     dummy := PORTD;
+     CNIF_bit := 0;
+     EnableInterrupts;
+     SEG1 := 1;
+     SEG2 := 1;
+     SEG3 := 1;
+     SEG4 := 1;
+     
+     Timer1_Counter := 0;
+     Segment_Counter := 0;
+     
+     srand(30000);
+end;
+
+begin                          // Main loop
+  Init;                        // Call Init procedure
+  // After HW Init, don't need any polling process under main loop
+  // Every function running in interrupt services
+  while true do
+  begin
+       {$IFDEF DEBUG}
+       LEDCHAR4(1);
+       {$ENDIF}
+  end;
+end.

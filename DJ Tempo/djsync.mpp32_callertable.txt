@@ -1,0 +1,18 @@
+main
+	__FillZeros
+	Init
+		UART1_Init
+			Get_Fosc_kHz
+			UART_Calc_BRG
+		UART1_Write_Text
+			UART1_Write
+		UART1_Write
+		InitTimer1
+		InitTimer2
+		srand
+	LEDCHAR4
+		WordToStrWithZeros
+Timer2Interrupt
+Timer1Interrupt
+	rand
+		srand

@@ -1,0 +1,24 @@
+// Copyright (c). 2021. Tamás Fejes
+// The hardware and software is licensed by the Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
+
+unit ADC;
+
+procedure ADC_Init(channels:word); // Hardware initialization
+function ADC_Read(channel:byte) : word; // Read AD channel
+
+implementation
+
+procedure ADC_Init(channels:word); // Hardware init.
+begin
+     AD1PCFG := (not channels);
+     AD1CON1 := 0x8000;
+     AD1CON2 := 0x0;
+     AD1CON3 := 0x4;
+end;
+
+function ADC_Read(channel:byte) : word; // Read AD input
+begin
+     result := 0;
+end;
+
+end.
