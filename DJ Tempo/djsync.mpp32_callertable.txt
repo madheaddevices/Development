@@ -10,8 +10,6 @@ main
 		InitTimer1
 		InitTimer2
 		srand
-	LEDCHAR4
-		WordToStrWithZeros
 Timer2Interrupt
 Timer1Interrupt
 	rand

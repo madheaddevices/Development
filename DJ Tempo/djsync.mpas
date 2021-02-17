@@ -65,7 +65,11 @@ var
 //     CNIF_bit := 0;
 //end;
 
-procedure Timer1Interrupt(); iv IVT_TIMER_1; ilevel 7; ics ICS_SRS; // 1msec Timer1 - ISR
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////           Timer1 Read Switches/Knobs/Buttons, etc.                    /////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+procedure Timer1Interrupt(); iv IVT_TIMER_1; ilevel 7; ics ICS_AUTO; // 1msec Timer1 - ISR
 var random_number:word;
 begin
   T1IF_bit	 := 0;
@@ -80,7 +84,11 @@ begin
   if Segment_Counter = 3 then Segment_Counter := 0 else inc(Segment_Counter);
 end;
 
-procedure Timer2Interrupt(); iv IVT_TIMER_2; ilevel 7; ics ICS_SRS;
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////           Timer2 Refresh LEDs, displays, UI outs                    ///////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+procedure Timer2Interrupt(); iv IVT_TIMER_2; ilevel 6; ics ICS_AUTO; // 10msec Timer2 ISR
 begin
   T2IF_bit	 := 0;
   //Enter your code here
@@ -102,7 +110,7 @@ end;
 
 procedure InitTimer2(); // Timer2 Initialization @ 10msec
 begin
-  T2CON	 := 0x8040;
+  T2CON	         := 0x8040;
   T2IP0_bit	 := 1;
   T2IP1_bit	 := 1;
   T2IP2_bit	 := 1;
@@ -112,7 +120,7 @@ begin
   TMR2		 := 0
 end;
 
-//procedure InitCN;
+//procedure InitCN; // Interrupt for buttons - not required/test
 //begin
 //     TRISD.4 := 1;              // RD4 - digital input
 //     TRISD.5 := 1;              // RD5 - digital input
@@ -185,16 +193,18 @@ begin
              UART1_Write_Text('Debug mode ON');
              UART1_Write(13);
      {$ENDIF}
+     
      DisableInterrupts;
      Time := 0;
      AD1PCFG := 0xFFFF;         // All pins are digital
      TRISB15_bit := 1;          // RB15 input
      
-     TRISF4_bit := 0;
-     TRISF5_bit := 0;
-     TRISG8_bit := 0;
-     TRISG7_bit := 0;
-     TRISG6_bit := 0;
+     TRISF4_bit := 0;           // Init SEGMENT1 out
+     TRISF5_bit := 0;           // Init SEGMENT1 out
+     TRISG8_bit := 0;           // Init SEGMENT1 out
+     TRISG7_bit := 0;           // Init SEGMENT1 out
+     
+     TRISG6_bit := 0;           // Debug G6 pinout set
      
      TRISE := 0;                // PORTE to be outputs
      LATE := 0;                 // PORTE set off
@@ -218,12 +228,8 @@ end;
 
 begin                          // Main loop
   Init;                        // Call Init procedure
+  
   // After HW Init, don't need any polling process under main loop
   // Every function running in interrupt services
   while true do
-  begin
-       {$IFDEF DEBUG}
-       LEDCHAR4(1);
-       {$ENDIF}
-  end;
 end.
